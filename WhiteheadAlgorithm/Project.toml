@@ -1,0 +1,7 @@
+name = "WhiteheadAlgorithm"
+uuid = "fa1a0b6c-fa2d-4c38-b4d8-520cbedff0e3"
+authors = ["Paula Welz <paula.welz@student.kit.edu>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

@@ -20,7 +20,7 @@ end
     A = WHA.Alphabet{Char}(['x','X','y','Y'])
     WHA.setinverse!(A,1,2)
     WHA.setinverse!(A,3,4)
-    @test WHA.freerewrite(A, []) == []
+    @test WHA.freerewrite(A, Vector{Int}()) == []
     @test WHA.freerewrite(A, [1,2]) == []
     @test WHA.freerewrite(A, [1,4,3,2,2]) == [2]
     @test WHA.freerewrite(A, [1,3,2,4]) == [1,3,2,4]

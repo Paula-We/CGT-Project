@@ -56,3 +56,11 @@ function Base.show(io::IO, A::Alphabet)
         println(io, "")
     end
 end
+
+function word(A::Alphabet, v::Vector{Int})
+    str=""
+    for i in v
+        str = str*string(A[i])
+    end
+    return str
+end

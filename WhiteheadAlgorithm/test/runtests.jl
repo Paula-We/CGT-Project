@@ -38,3 +38,12 @@ end
     @test_throws AssertionError WHA.nielsen(A,1,1,'l','+',[1])
     @test WHA.nielsen(A,1,2,'l','+',[4,1]) == [1]
 end
+
+@testset "WhiteheadAut" begin
+    A = WHA.generateFreeAlphabet(8)
+    options = [1,1,2,3,4,5,6,7]
+    WAut = WHA.WhiteheadAut(A, 1, options)
+    invopt = WHA.inverseoptions(options)
+    WAut2 = WHA.WhiteheadAut(A, 1, invopt)
+    @test WHA.isIdentity(WHA.compose(WAut, WAut2))==true
+end

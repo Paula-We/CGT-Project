@@ -3,11 +3,7 @@
 #This function evaluates the Nielsen automorphism which fixes every generator but the ith and sends the ith to a product with the jth
 #or with the inverse of the jth
 function nielsenonletter(A::Alphabet, i::Int, j::Int, lr::Char, pm::Char, l::Int)
-    @assert i != j "This is only a Nielsen automorphism for $i not equal to $j"
-    @assert i <= length(A)/2 && j <=length(A)/2 "$i or $j is not in the Alphabet"
-    @assert lr ∈ ['l','r'] "$lr is an invalid argument, only 'l' and 'r' are allowed"
-    @assert pm ∈ ['+','-'] "$pm is an invalid argument, only '+' and '-' are allowed"
-    @assert l <= length(A)
+    @assert l <= length(A) "$l not in Alphabet"
     if l == 2i-1
         if lr == 'l'
             if pm == '+'
@@ -41,7 +37,11 @@ function nielsenonletter(A::Alphabet, i::Int, j::Int, lr::Char, pm::Char, l::Int
     end
 end
 
-function nielsen(A::Alphabet, i::Int, j::Int, lr::Char, pm::Char, word::Vector{Int}) 
+function nielsen(A::Alphabet, i::Int, j::Int, lr::Char, pm::Char, word::Vector{Int})
+    @assert i != j "This is only a Nielsen automorphism for $i not equal to $j"
+    @assert i <= length(A)/2 && j <=length(A)/2 "$i or $j is not in the Alphabet"
+    @assert lr ∈ ['l','r'] "$lr is an invalid argument, only 'l' and 'r' are allowed"
+    @assert pm ∈ ['+','-'] "$pm is an invalid argument, only '+' and '-' are allowed"
     newword = Vector{Int}()
     if length(word)==0
         return word
@@ -96,6 +96,15 @@ function Base.show(io::IO, ϕ::Endomorphism)
     end
 end
 
+function isIdentity(ϕ::Endomorphism)
+    for i in length(ϕ.images)
+        if ϕ.images[i]!= [2i-1]
+            return false
+        end
+    end
+    return true
+end
+
 function NielsenAut(A, i, j, lr, pm)
     @assert i != j "This is only a Nielsen automorphism for $i not equal to $j"
     @assert i <= length(A)/2 && j <=length(A)/2 "$i or $j is not in the Alphabet"
@@ -124,4 +133,61 @@ function NielsenAut(A, i, j, lr, pm)
     return Endomorphism(A, images)
 end
 
+#Whiteheadautomorphism that fixes the ith generator a, and sends every other generator x to one of the following options
+#1: x^-1
+#2: xa
+#3: a^⁻1x
+#4: a^-1xa
+#5: xa^-1
+#6: ax
+#7: axa^-1
+function WhiteheadAut(A::Alphabet, i::Int, options::Vector{Int})
+    @assert length(A)==length(options)*2 "Optionsize isn't matching to Alphabetsize"
+    @assert i <= length(A)/2
+    images = Vector{Vector{Int}}(undef, length(options))
+    for k in 1:length(options)
+        @assert options[k] ∈ 1:7
+        if options[k]==1
+            images[k]=[2k]
+        elseif options[k]==2
+            images[k]=[2k-1,2i-1]
+        elseif options[k]==3
+            images[k]=[2i,2k-1]
+        elseif options[k]==4
+            images[k]=[2i,2k-1,2i-1]
+        elseif options[k]==5
+            images[k]=[2k-1,2i]
+        elseif options[k]==6
+            images[k]=[2i-1,2k-1]
+        else
+            images[k]=[2i-1,2k-1,2i]
+        end
+        if k == i
+            images[k]=[2k-1]
+        end
+    end
+    return Endomorphism(A, images)
+end
 
+#WhiteheadAut(A, i, options) is inverse to WhiteheadAut(A, i inverseoptions(options))
+function inverseoptions(options::Vector{Int})
+    newoptions = Vector{Int}(undef, length(options))
+    for k in 1:length(options)
+        if options[k]==1
+            newoptions[k]=1
+        elseif options[k]==2
+            newoptions[k]=5
+        elseif options[k]==3
+            newoptions[k]=6
+        elseif options[k]==4
+            newoptions[k]=7
+        elseif options[k]==5
+            newoptions[k]=2
+        elseif options[k]==6
+            newoptions[k]=3
+        else
+            newoptions[k]=4
+        end
+    end
+    return newoptions
+end

@@ -46,4 +46,10 @@ end
     invopt = WHA.inverseoptions(options)
     WAut2 = WHA.WhiteheadAut(A, 1, invopt)
     @test WHA.isIdentity(WHA.compose(WAut, WAut2))==true
+    @test WHA.evaluate(A, WAut, [1]) == [1]
+    @test WHA.evaluate(A, WAut, [2]) == [2]
+    @test WHA.evaluate(A, WAut, [3]) == [4]
+    @test WHA.evaluate(A, WAut, [4]) == [3]
+    @test WHA.evaluate(A, WAut, [5]) == [5,1]
+    @test WHA.evaluate(A, WAut, [6]) == [2,6]
 end

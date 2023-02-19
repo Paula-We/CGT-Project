@@ -78,7 +78,7 @@ function compose(ϕ::Endomorphism,ψ::Endomorphism)
             if !iseven(l) #l is a generator itself and not the inverse of a generator
                 append!(newimages[i], ϕ.images[floor(Int, (l+1)/2)])
             else #l is the inverse of a generator
-                append!(newimages[i], inv(A, ϕ.images[floor(Int,l/2)]))
+                append!(newimages[i], inv(ϕ.A, ϕ.images[floor(Int,l/2)]))
             end
         end
     end
@@ -103,6 +103,18 @@ function isIdentity(ϕ::Endomorphism)
         end
     end
     return true
+end
+
+function evaluate(A::Alphabet, ϕ::Endomorphism, word::Vector{Int})
+    image=Vector{Int}()
+    for l in word
+        if !iseven(l) #l is a generator itself and not the inverse of a generator
+            append!(image, ϕ.images[floor(Int, (l+1)/2)])
+        else #l is the inverse of a generator
+            append!(image, inv(A, ϕ.images[floor(Int,l/2)]))
+        end
+    end
+    return image
 end
 
 function NielsenAut(A, i, j, lr, pm)

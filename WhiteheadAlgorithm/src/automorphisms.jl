@@ -184,22 +184,9 @@ end
 #WhiteheadAut(A, i, options) is inverse to WhiteheadAut(A, i inverseoptions(options))
 function inverseoptions(options::Vector{Int})
     newoptions = Vector{Int}(undef, length(options))
+    v = [1,5,6,7,2,3,4]
     for k in 1:length(options)
-        if options[k]==1
-            newoptions[k]=1
-        elseif options[k]==2
-            newoptions[k]=5
-        elseif options[k]==3
-            newoptions[k]=6
-        elseif options[k]==4
-            newoptions[k]=7
-        elseif options[k]==5
-            newoptions[k]=2
-        elseif options[k]==6
-            newoptions[k]=3
-        else
-            newoptions[k]=4
-        end
+        newoptions[k]=v[options[k]]
     end
     return newoptions
 end

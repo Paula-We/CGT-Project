@@ -190,3 +190,18 @@ function inverseoptions(options::Vector{Int})
     end
     return newoptions
 end
+
+function TranspositionAut(A::Alphabet, i::Int, j::Int)
+    @assert i<=length(A)/2 && j<=length(A)/2 "One of the indices is too big for this alphabet"
+    images = Vector{Vector{Int}}(undef,floor(Int,length(A)/2))
+    for k in 1:length(images)
+        if k == i
+            images[k]= [2j-1]
+        elseif k == j
+            images[k]=[2i-1]
+        else
+            images[k]=[2k-1]
+        end
+    end
+    return Endomorphism(A, images)
+end

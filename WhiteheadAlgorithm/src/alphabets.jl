@@ -29,6 +29,7 @@ function Base.inv(A::Alphabet, index::Integer)
 
     return A.inverse[index]
 end
+
 Base.inv(A::Alphabet, letter::T) where T = A[Base.inv(A,A[letter])]
 
 function setinverse!(A::Alphabet, x::Integer, X::Integer)
@@ -73,4 +74,15 @@ function generateFreeAlphabet(n::Int) #generates an alphabet for the free group 
         setinverse!(A,2*i-1,2*i)
     end
     return A
+end
+
+function Base.inv(A::Alphabet, word::Vector{Int})
+    inverse = Vector{Int}()
+    if length(word)==0
+        return word
+    end
+    for i in length(word):-1:1
+        push!(inverse, inv(A, word[i]))
+    end
+    return inverse
 end

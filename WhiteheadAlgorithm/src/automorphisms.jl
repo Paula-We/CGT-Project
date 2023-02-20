@@ -114,7 +114,7 @@ function evaluate(A::Alphabet, ϕ::Endomorphism, word::Vector{Int})
             append!(image, inv(A, ϕ.images[floor(Int,l/2)]))
         end
     end
-    return image
+    return freerewrite(A, image)
 end
 
 function NielsenAut(A, i, j, lr, pm)

@@ -40,17 +40,26 @@ function isPrimitive(A::Alphabet, w0::Vector{Int}, pr=true::Bool)
         pr&&println("Now we need to look at all Whitehead automorphisms...")
 
         for i in 1:n
-            for options in Iterators.product([collect(1:7) for k in 1:n]...) #iterate over all Whitehead autom except for the permutations
+            for options in Iterators.product([collect(1:4) for k in 1:n]...) #iterate over all Whitehead autom except for the permutations
                 options = collect(options)
                 WAut = WhiteheadAut(A, i, options)
                 w2 = evaluate(A, WAut, w)
+                invopt = inverseoptions(options)
+                WAut2 = WhiteheadAut(A, i, invopt) #WAut2 is the inverse of WAut             
                 if length(w2) < length(w)
                     w = w2
                     pr&&println(WAut)
                     pr&&println(word(A,w))
-                    invopt = inverseoptions(options)
-                    f2 = WhiteheadAut(A, i, invopt) #f2 is the inverse of WAut shortening w
-                    f = compose(f,f2)
+                    f = compose(f,WAut2)
+                    autfound = true
+                    break
+                end
+                w3 = evaluate(A, WAut2, w)
+                if length(w3) < length(w)
+                    w = w3
+                    pr&&println(WAut2)
+                    pr&&println(word(A,w))
+                    f = compose(f,WAut)
                     autfound = true
                     break
                 end
@@ -86,6 +95,6 @@ end
 #[2,5,4,6,1,3,1,3,4,2,6,3,1,5] not primitive in F_3
 #[2,5,4,6,1,3,6,3,1] is primitive also using Whitehead automorphisms in F_3
 A = generateFreeAlphabet(3)
-isPrimitive(A, [3,1,4,6,2,3])
+isPrimitive(A, [2,5,4,6,1,3,6,3,1])
 
 end # module WhiteheadAlgorithm

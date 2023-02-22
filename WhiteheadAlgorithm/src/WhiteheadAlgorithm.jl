@@ -162,6 +162,15 @@ function isPartOfBasis(A::Alphabet, b0::Vector{Vector{Int}}, pr=true::Bool) #We 
             end
         end
         pr&&println((w -> word(A,w)).(b))
+        for j in 1:length(b)
+            i = floor(Int, b[j][1]+1/2)
+            if i != j
+                T = TranspositionAut(A, i, j)
+                b = (w -> evaluate(A, T, w)).(b)
+                f = compose(f, Aut)
+            end
+        end
+        pr&&println((w -> word(A,w)).(b))
         pr&&println("These elements can be part of a basis. Here's an automorphism mapping some generators to them:")
         pr&&print(f)
         return (true, f)
@@ -175,6 +184,7 @@ end
 #[1,1] is not primitive in F_2
 #[2,5,4,6,1,3,1,3,4,2,6,3,1,5] not primitive in F_3
 #[2,5,4,6,1,3,6,3,1] is primitive also using Whitehead automorphisms in F_3
+#[[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]] is a basis
 A = generateFreeAlphabet(3)
 isPartOfBasis(A, [[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]])
 #isPrimitive(A, [2,5,4,6,1,3,6,3,1])

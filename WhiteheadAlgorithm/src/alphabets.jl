@@ -86,3 +86,8 @@ function Base.inv(A::Alphabet, word::Vector{Int})
     end
     return inverse
 end
+
+function summedweight(words::Vector{Vector{Int}})
+    weights = length.(words)
+    return sum(weights)
+end

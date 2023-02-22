@@ -205,3 +205,11 @@ function TranspositionAut(A::Alphabet, i::Int, j::Int)
     end
     return Endomorphism(A, images)
 end
+
+function InvertGenAut(A::Alphabet, i::Int)
+    @assert i<=length(A)/2 "$i is too big for this alphabet"
+    n = floor(Int,length(A)/2)
+    images = [[2k-1] for k in 1:n]
+    images[i] = [2i]
+    return Endomorphism(A, images)
+end

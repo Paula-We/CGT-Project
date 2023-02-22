@@ -90,8 +90,8 @@ function Base.show(io::IO, ϕ::Endomorphism)
     println(io, "Endomorphism of the free group on $l generators")
     for i in 1:length(ϕ.images)
         w=ϕ.images[i]
-        im = word(ϕ.A, w)
-        gen = ϕ.A[2*i-1]
+        im = word(ϕ.A, w) 
+        gen = ϕ.A[2*i-1] 
         println(io, "$gen maps to $im")
     end
 end
@@ -106,7 +106,7 @@ function isIdentity(ϕ::Endomorphism)
 end
 
 function evaluate(A::Alphabet, ϕ::Endomorphism, word::Vector{Int})
-    image=Vector{Int}()
+    image = Vector{Int}()
     for l in word
         if !iseven(l) #l is a generator itself and not the inverse of a generator
             append!(image, ϕ.images[floor(Int, (l+1)/2)])
@@ -154,25 +154,27 @@ end
 #6: ax
 #7: axa^-1
 function WhiteheadAut(A::Alphabet, i::Int, options::Vector{Int})
-    @assert length(A)==length(options)*2 "Optionsize isn't matching to Alphabetsize"
+    @assert length(A)==(length(options)-1)*2 "Optionsize isn't matching to Alphabetsize"
     @assert i <= length(A)/2
     images = Vector{Vector{Int}}(undef, length(options))
     for k in 1:length(options)
         @assert options[k] ∈ 1:7
+        skip = k > i ? 1 : 0
+        k2 = k + skip
         if options[k]==1
-            images[k]=[2k]
+            images[k2]=[2k2]
         elseif options[k]==2
-            images[k]=[2k-1,2i-1]
+            images[k2]=[2k2-1,2i-1]
         elseif options[k]==3
-            images[k]=[2i,2k-1]
+            images[k2]=[2i,2k2-1]
         elseif options[k]==4
-            images[k]=[2i,2k-1,2i-1]
+            images[k2]=[2i,2k2-1,2i-1]
         elseif options[k]==5
-            images[k]=[2k-1,2i]
+            images[k2]=[2k2-1,2i]
         elseif options[k]==6
-            images[k]=[2i-1,2k-1]
+            images[k2]=[2i-1,2k2-1]
         else
-            images[k]=[2i-1,2k-1,2i]
+            images[k2]=[2i-1,2k2-1,2i]
         end
         if k == i
             images[k]=[2k-1]
@@ -191,6 +193,7 @@ function inverseoptions(options::Vector{Int})
     return newoptions
 end
 
+#Automorphism that permutes the ith and the jth generator
 function TranspositionAut(A::Alphabet, i::Int, j::Int)
     @assert i<=length(A)/2 && j<=length(A)/2 "One of the indices is too big for this alphabet"
     images = Vector{Vector{Int}}(undef,floor(Int,length(A)/2))
@@ -206,6 +209,7 @@ function TranspositionAut(A::Alphabet, i::Int, j::Int)
     return Endomorphism(A, images)
 end
 
+#Automorphism that inverts the ith generator
 function InvertGenAut(A::Alphabet, i::Int)
     @assert i<=length(A)/2 "$i is too big for this alphabet"
     n = floor(Int,length(A)/2)

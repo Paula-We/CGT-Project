@@ -66,7 +66,8 @@ function word(A::Alphabet, v::Vector{Int})
     return str
 end
 
-function generateFreeAlphabet(n::Int) #generates an alphabet for the free group in n generators
+#generates an alphabet for the free group in n<=26 generators
+function generateFreeAlphabet(n::Int) 
     @assert n <= 26 "This function only works up to n = 26"
     alph = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z']
     A = Alphabet{Char}(alph[1:2*n])

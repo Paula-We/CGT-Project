@@ -58,6 +58,7 @@ function Base.show(io::IO, A::Alphabet)
     end
 end
 
+#takes a word represented by a vector of integers and makes a string out of it
 function word(A::Alphabet, v::Vector{Int})
     str=""
     for i in v
@@ -71,6 +72,20 @@ function generateFreeAlphabet(n::Int)
     @assert n <= 26 "This function only works up to n = 26"
     alph = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z']
     A = Alphabet{Char}(alph[1:2*n])
+    for i in 1:n
+        setinverse!(A,2*i-1,2*i)
+    end
+    return A
+end
+
+#generates an alphabet for the free group
+function generateBigFreeAlphabet(n::Int)
+    letters = Vector{String}(undef, 2*n)
+    for i in 1:n
+        letters[2*i-1]="x$i"
+        letters[2*i]="X$i"
+    end
+    A = Alphabet{String}(letters)
     for i in 1:n
         setinverse!(A,2*i-1,2*i)
     end

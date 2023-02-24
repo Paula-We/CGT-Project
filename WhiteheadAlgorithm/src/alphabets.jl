@@ -42,7 +42,6 @@ function setinverse!(A::Alphabet, x::Integer, X::Integer)
     return A
 end
 
-Base.length(A::Alphabet) = length(A.letters)
 Base.iterate(A::Alphabet) = iterate(A.letters)
 Base.iterate(A::Alphabet, state) = iterate(A.letters, state)
 Base.eltype(::Type{Alphabet{T}}) where {T} = T

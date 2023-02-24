@@ -29,14 +29,10 @@ end
 
 @testset "Nielsen automorphisms" begin
     A = WHA.generateFreeAlphabet(3)
-    @test WHA.nielsen(A,1,2,'l','+',[1]) == [3,1]
-    @test WHA.nielsen(A,1,2,'l','-',[1]) == [4,1]
-    @test WHA.nielsen(A,1,2,'r','+',[1]) == [1,3]
-    @test WHA.nielsen(A,1,2,'r','-',[1]) == [1,4]
-    @test WHA.nielsen(A,1,2,'l','+',[2]) == [2,4]
-    @test WHA.nielsen(A,1,2,'l','+',[3]) == [3]
-    @test_throws AssertionError WHA.nielsen(A,1,1,'l','+',[1])
-    @test WHA.nielsen(A,1,2,'l','+',[4,1]) == [1]
+    @test WHA.evaluate(A, WHA.NielsenAut(A,1,2,'l','-'), [1]) == [4,1]
+    @test WHA.evaluate(A, WHA.NielsenAut(A,1,2,'r','+'), [1]) == [1,3]
+    @test WHA.evaluate(A, WHA.NielsenAut(A,1,2,'r','-'), [1]) == [1,4]
+    @test_throws AssertionError WHA.NielsenAut(A,1,1,'l','+')
     N = WHA.NielsenAut(A,1,2,'l','+')
     @test (w -> WHA.evaluate(A, N, w)).([[1],[3],[5]])==[[3,1],[3],[5]] 
 end

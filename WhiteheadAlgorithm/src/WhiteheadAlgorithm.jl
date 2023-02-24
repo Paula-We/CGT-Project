@@ -62,10 +62,11 @@ function minimize(A::Alphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
         #iterate over all Nielsen automs except for x |-> x^-1 because they don't shorten any word
         for (i,j,lr,pm) in Iterators.product(1:n,1:n,['l','r'],['+','-']) 
             if i != j
-                b2 = (w -> nielsen(A,i,j,lr,pm,w)).(b)
+                NAut = NielsenAut(A, i, j, lr, pm)
+                b2 = (w -> evaluate(A, NAut, w)).(b)
                 if summedweight(b2) < summedweight(b) #the automorphism shortened b
                     b = b2
-                    pr&&println(NielsenAut(A,i,j,lr,pm))
+                    pr&&println(NAut)
                     pr&&println((w -> word(A,w)).(b))
                     pr&&println("")
                     pm2 = (pm == '+') ? '-' : '+'

@@ -37,19 +37,33 @@ end
     @test WHA.nielsen(A,1,2,'l','+',[3]) == [3]
     @test_throws AssertionError WHA.nielsen(A,1,1,'l','+',[1])
     @test WHA.nielsen(A,1,2,'l','+',[4,1]) == [1]
+    N = WHA.NielsenAut(A,1,2,'l','+')
+    @test (w -> WHA.evaluate(A, N, w)).([[1],[3],[5]])==[[3,1],[3],[5]] 
 end
 
 @testset "WhiteheadAut" begin
     A = WHA.generateFreeAlphabet(8)
-    options = [1,1,2,3,4,5,6,7]
+    options = [2,3,4,5,6,7,1]
     WAut = WHA.WhiteheadAut(A, 1, options)
     invopt = WHA.inverseoptions(options)
     WAut2 = WHA.WhiteheadAut(A, 1, invopt)
     @test WHA.isIdentity(WHA.compose(WAut, WAut2))==true
-    @test WHA.evaluate(A, WAut, [1]) == [1]
-    @test WHA.evaluate(A, WAut, [2]) == [2]
-    @test WHA.evaluate(A, WAut, [3]) == [4]
-    @test WHA.evaluate(A, WAut, [4]) == [3]
-    @test WHA.evaluate(A, WAut, [5]) == [5,1]
-    @test WHA.evaluate(A, WAut, [6]) == [2,6]
+    @test (w -> WHA.evaluate(A, WAut, w)).([[1],[3],[5],[7],[9],[11],[13],[15]])==[[1],[3,1],[2,5],[2,7,1],[9,2],[1,11],[1,13,2],[16]]
+end
+
+@testset "Part of Basis" begin
+    A = WHA.generateFreeAlphabet(3)
+    w = [3,1,4,6,2,3]
+    (b, f) = WHA.isPartOfBasis(A, [w],false)
+    @test b == true
+    @test WHA.evaluate(A, f, [1]) == w
+    (b, f) = WHA.isPartOfBasis(A, [[1,1]],false)
+    @test b == false
+    (b, f) = WHA.isPartOfBasis(A, [[1,3,2,4]],false)
+    @test b == false   
+    (b, f) = WHA.isPartOfBasis(A, [[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]],false)
+    @test b == true
+    @test WHA.evaluate(A, f, [1]) == [2,5,4,6,1,3,6,3,1]
+    @test WHA.evaluate(A, f, [3]) == [2,4,1]
+    @test WHA.evaluate(A, f, [5]) == [2,5,4,1]
 end

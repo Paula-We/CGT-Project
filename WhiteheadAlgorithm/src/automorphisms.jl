@@ -154,12 +154,13 @@ end
 #6: ax
 #7: axa^-1
 function WhiteheadAut(A::Alphabet, i::Int, options::Vector{Int})
-    @assert length(A)==(length(options)-1)*2 "Optionsize isn't matching to Alphabetsize"
+    @assert length(A)==(length(options)+1)*2 "Optionsize isn't matching to Alphabetsize"
     @assert i <= length(A)/2
-    images = Vector{Vector{Int}}(undef, length(options))
+    images = Vector{Vector{Int}}(undef, length(options)+1)
+    images[i]=[2i-1]
     for k in 1:length(options)
         @assert options[k] ∈ 1:7
-        skip = k > i ? 1 : 0
+        skip = k >= i ? 1 : 0
         k2 = k + skip
         if options[k]==1
             images[k2]=[2k2]
@@ -175,9 +176,6 @@ function WhiteheadAut(A::Alphabet, i::Int, options::Vector{Int})
             images[k2]=[2i-1,2k2-1]
         else
             images[k2]=[2i-1,2k2-1,2i]
-        end
-        if k == i
-            images[k]=[2k-1]
         end
     end
     return Endomorphism(A, images)

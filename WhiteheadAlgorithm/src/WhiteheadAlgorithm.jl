@@ -34,7 +34,9 @@ function isPartOfBasis(A::Alphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
         pr&&print(f)
         return (true, f)
     else
-        pr&&println("These elements can not be part of a basis.")
+        pr&&print((w -> word(A,w)).(b0))
+        pr&&println(" can not be part of a basis.")
+        return (false,f)
     end
 end
 
@@ -81,7 +83,7 @@ function minimize(A::Alphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
         pr&&println("Now we need to look at all Whitehead automorphisms...")
         for i in 1:n
             #iterate over all Whitehead automorphisms except for the permutations because they don't change the length
-            for options in Iterators.product([collect(1:4) for k in 1:n]...) 
+            for options in Iterators.product([collect(1:4) for k in 1:(n-1)]...) 
                 options = collect(options)
                 WAut = WhiteheadAut(A, i, options)
                 b2 = (w -> evaluate(A, WAut, w)).(b)
@@ -149,8 +151,8 @@ end
 #[2,5,4,6,1,3,1,3,4,2,6,3,1,5] not primitive in F_3
 #[2,5,4,6,1,3,6,3,1] is primitive also using Whitehead automorphisms in F_3
 #[[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]] is a basis
-A = generateFreeAlphabet(3)
-isPartOfBasis(A, [[2,4,1],[2,5,4,1]])
+A = generateFreeAlphabet(5)
+isPartOfBasis(A, [[1,3,2,4,4,2,3,1]])
 #isPrimitive(A, [3,1,4,6,2,3])
 
 end # module WhiteheadAlgorithm

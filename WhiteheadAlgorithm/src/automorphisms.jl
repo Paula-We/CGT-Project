@@ -56,14 +56,16 @@ struct Endomorphism
     A::Alphabet
     images::Vector{Vector{Int}} #Images on the generators (but not on their inverses)
    
-    function Endomorphism(A, images)
-        @assert length(A)==2*length(images)
-        for i in 1:length(images)
-            im = images[i]
-            for l in im
-                @assert l <= 2*length(images) "This does not define an endomorphism"
+    function Endomorphism(A::Alphabet, images::Vector{Vector{Int}}, safe=true::Bool)
+        if safe
+            @assert length(A)==2*length(images)
+            for i in 1:length(images)
+                im = images[i]
+                for l in im
+                    @assert l <= 2*length(images) "This does not define an endomorphism"
+                end
+                images[i]=freerewrite(A,im)
             end
-            images[i]=freerewrite(A,im)
         end
         return new(A, images)
     end
@@ -142,7 +144,7 @@ function NielsenAut(A, i, j, lr, pm)
             images[k]=[2*k-1]
         end
     end
-    return Endomorphism(A, images)
+    return Endomorphism(A, images, false)
 end
 
 #Whiteheadautomorphism that fixes the ith generator a, and sends every other generator x to one of the following options
@@ -178,7 +180,7 @@ function WhiteheadAut(A::Alphabet, i::Int, options::Vector{Int})
             images[k2]=[2i-1,2k2-1,2i]
         end
     end
-    return Endomorphism(A, images)
+    return Endomorphism(A, images, false)
 end
 
 #WhiteheadAut(A, i, options) is inverse to WhiteheadAut(A, i inverseoptions(options))
@@ -204,7 +206,7 @@ function TranspositionAut(A::Alphabet, i::Int, j::Int)
             images[k]=[2k-1]
         end
     end
-    return Endomorphism(A, images)
+    return Endomorphism(A, images, false)
 end
 
 #Automorphism that inverts the ith generator
@@ -213,5 +215,5 @@ function InvertGenAut(A::Alphabet, i::Int)
     n = floor(Int,length(A)/2)
     images = [[2k-1] for k in 1:n]
     images[i] = [2i]
-    return Endomorphism(A, images)
+    return Endomorphism(A, images, false)
 end

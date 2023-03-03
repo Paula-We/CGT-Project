@@ -33,7 +33,6 @@ end
 
 function compose(ϕ::Endomorphism,ψ::Endomorphism)
     @assert ϕ.A==ψ.A "The morphisms have to have the same Alphabet."
-    A = ϕ.A
     newimages = Vector{Vector{Int}}(undef,length(ϕ.images))
     for i in 1:length(newimages)
         newimages[i]= evaluate(ϕ, ψ.images[i])

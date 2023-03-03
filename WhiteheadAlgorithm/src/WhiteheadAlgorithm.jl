@@ -135,8 +135,9 @@ function permuteGensandInv(A::FreeAlphabet, b::Vector{Vector{Int}}, f::Endomorph
     #First we map our word vector to another one where each word is a generator 
     #(so no inverses of generators anymore)
     for i in 1:length(b)
-        if iseven(b[i][1])
-            Aut = InvertGenAut(A, floor(Int, b[i][1]/2))
+        (k, isgen) = A.letterToGen[b[i][1]]
+        if !isgen
+            Aut = InvertGenAut(A, k)
             b = (w -> evaluate(Aut, w)).(b)
             f = compose(f, Aut)
             pr&&println(Aut)
@@ -147,9 +148,9 @@ function permuteGensandInv(A::FreeAlphabet, b::Vector{Vector{Int}}, f::Endomorph
     #Now we need to get the generators in the right ordered
     #To achieve that we use transpositions
     for j in 1:length(b)
-        i = floor(Int, (b[j][1]+1)/2) #the b[j]th-letter of our alphabet corresponds to the ith generator
-        if i != j
-            T = TranspositionAut(A, i, j)
+        k = A.letterToGen[b[j][1]][1]
+        if k != j
+            T = TranspositionAut(A, k, j)
             b = (w -> evaluate(T, w)).(b)
             f = compose(f, T)
             pr&&println(T)
@@ -166,6 +167,6 @@ end
 #[2,5,4,6,1,3,6,3,1] is primitive also using Whitehead automorphisms in F_3
 #[[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]] is a basis
 A = generateFreeAlphabet(5)
-isPartOfBasis(A, [[2,4],[3],[2,4]])
+isPartOfBasis(A, [[3,1,4,6,2,3]])
 
 end # module WhiteheadAlgorithm

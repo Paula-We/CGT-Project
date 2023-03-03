@@ -56,6 +56,10 @@ end
     @test b == false
     (b, f) = WHA.isPartOfBasis(A, [[1,3,2,4]],false)
     @test b == false   
+    (b, f) = WHA.isPartOfBasis(A, [[1,2]],false)
+    @test b == false
+    (b, f) = WHA.isPartOfBasis(A, [[1,],[2,4,1],[1]],false)
+    @test b == false    
     (b, f) = WHA.isPartOfBasis(A, [[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]],false)
     @test b == true
     @test WHA.evaluate(f, [1]) == [2,5,4,6,1,3,6,3,1]

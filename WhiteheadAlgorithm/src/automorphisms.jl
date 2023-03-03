@@ -17,49 +17,6 @@ struct Endomorphism
     end
 end
 
-function compose(ϕ::Endomorphism,ψ::Endomorphism)
-    @assert ϕ.A==ψ.A "The morphisms have to have the same Alphabet."
-    A = ϕ.A
-    newimages = Vector{Vector{Int}}(undef,length(ϕ.images))
-    for i in 1:length(newimages)
-        newimages[i]=Vector{Int}()
-        for l in ψ.images[i]
-            if length(A.letterToGen) < l
-                println(l)
-                println(A.letterToGen)
-                println(length(A))
-            end
-            (k, isgen) = A.letterToGen[l]
-            if isgen #l is a generator itself and not the inverse of a generator
-                append!(newimages[i], ϕ.images[k])
-            else #l is the inverse of a generator
-                append!(newimages[i], inv(ϕ.A, ϕ.images[k]))
-            end
-        end
-    end
-    return Endomorphism(ϕ.A, newimages)
-end
-
-function Base.show(io::IO, ϕ::Endomorphism)
-    l=length(ϕ.images)
-    println(io, "Endomorphism of the free group on $l generators")
-    for i in 1:length(ϕ.images)
-        w=ϕ.images[i]
-        im = word(ϕ.A, w) 
-        gen = ϕ.A.gen[i]
-        println(io, "$gen maps to $im")
-    end
-end
-
-function isIdentity(ϕ::Endomorphism)
-    for i in length(ϕ.images)
-        if ϕ.images[i]!= [ϕ.A.gen[i]]
-            return false
-        end
-    end
-    return true
-end
-
 function evaluate(A::FreeAlphabet, ϕ::Endomorphism, word::Vector{Int})
     image = Vector{Int}()
     for l in word
@@ -73,6 +30,35 @@ function evaluate(A::FreeAlphabet, ϕ::Endomorphism, word::Vector{Int})
     return freerewrite(A, image)
 end
 
+function compose(ϕ::Endomorphism,ψ::Endomorphism)
+    @assert ϕ.A==ψ.A "The morphisms have to have the same Alphabet."
+    A = ϕ.A
+    newimages = Vector{Vector{Int}}(undef,length(ϕ.images))
+    for i in 1:length(newimages)
+        newimages[i]= evaluate(A, ϕ, ψ.images[i])
+    end
+    return Endomorphism(ϕ.A, newimages)
+end
+
+function Base.show(io::IO, ϕ::Endomorphism)
+    l=length(ϕ.images)
+    println(io, "Endomorphism of the free group on $l generators")
+    for i in 1:length(ϕ.images)
+        w=ϕ.images[i]
+        im = word(ϕ.A, w) 
+        gen = A[ϕ.A.gen[i]]
+        println(io, "$gen maps to $im")
+    end
+end
+
+function isIdentity(ϕ::Endomorphism)
+    for i in length(ϕ.images)
+        if ϕ.images[i]!= [ϕ.A.gen[i]]
+            return false
+        end
+    end
+    return true
+end
 
 #This is the Nielsen automorphism which fixes every generator but the ith and sends the ith to a product with the jth
 #or with the inverse of the jth (depending on lr and pm)

@@ -17,16 +17,17 @@ struct FreeAlphabet{T}
     letters :: Vector{T}
 	dict :: Dict{T,Int}
 	inverse :: Vector{Int}
-    gen :: Vector{Int}
+    gen :: Vector{Int} # gen[i] gives us the ith generator of this alphabet
+    # letterToGen[i] gives us the index of the generator corresponding to the ith letter
+    # and the boolean indicates if this letter is the generator or the inverse of the generator
     letterToGen :: Vector{Tuple{Int,Bool}} 
 	function FreeAlphabet(A::Alphabet{T}) where T
-        dim = floor(Int, length(A)/2)
 		alreadyseen = zeros(Bool, length(A))
         gen = Vector{Int}()
         letterToGen = Vector{Tuple{Int,Bool}}(undef, length(A))
         for i in 1:length(A)           
             if !alreadyseen[i]
-                @assert hasinverse(A, i) && inv(A, i) != i
+                @assert hasinverse(A, i) && inv(A, i) != i #every letter needs another letter as inverse
                 alreadyseen[inv(A,i)] = 1
                 push!(gen, i)
                 letterToGen[i] = (length(gen), true)

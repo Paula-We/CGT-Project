@@ -49,16 +49,20 @@ end
 @testset "Part of Basis" begin
     A = WHA.generateFreeAlphabet(3)
     w = [3,1,4,6,2,3]
-    (b, f) = WHA.isPartOfBasis(A, [w],false)
+    (b, f) = WHA.isPrimitive(A, w,false) #here we should need both additional transformations
     @test b == true
     @test WHA.evaluate(f, [1]) == w
+    (b, f) = WHA.isPrimitive(A, [2,5,4,6,1,3,6,3,1],false) #here we also need Whitehead automorphisms
+    @test b == true
+    (b, f) = WHA.isPrimitive(A, [2,5,4,6,1,3,1,3,4,2,6,3,1,5],false)
+    @test b == false
     (b, f) = WHA.isPartOfBasis(A, [[1,1]],false)
     @test b == false
     (b, f) = WHA.isPartOfBasis(A, [[1,3,2,4]],false)
     @test b == false   
-    (b, f) = WHA.isPartOfBasis(A, [[1,2]],false)
+    (b, f) = WHA.isPartOfBasis(A, [[1,2]],false) #Trivial element is not part of basis
     @test b == false
-    (b, f) = WHA.isPartOfBasis(A, [[1,],[2,4,1],[1]],false)
+    (b, f) = WHA.isPartOfBasis(A, [[1],[2,4,1],[1]],false) #All elements in a basis have to be pairwise distinct
     @test b == false    
     (b, f) = WHA.isPartOfBasis(A, [[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]],false)
     @test b == true

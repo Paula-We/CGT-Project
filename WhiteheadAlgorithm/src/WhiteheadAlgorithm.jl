@@ -161,12 +161,4 @@ function permuteGensandInv(A::FreeAlphabet, b::Vector{Vector{Int}}, f::Endomorph
     return (b,f)
 end
 
-#[3,1,4,6,2,3] is primitive (only using Nielsen automorphisms) in F_3 (here we need both additional transformations at the end)
-#[1,1] is not primitive in F_2 and in F_3
-#[2,5,4,6,1,3,1,3,4,2,6,3,1,5] not primitive in F_3
-#[2,5,4,6,1,3,6,3,1] is primitive also using Whitehead automorphisms in F_3
-#[[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]] is a basis
-A = generateFreeAlphabet(5)
-isPartOfBasis(A, [[3,1,4,6,2,3]])
-
 end # module WhiteheadAlgorithm

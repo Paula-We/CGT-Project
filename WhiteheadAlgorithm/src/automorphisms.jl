@@ -105,7 +105,7 @@ function NielsenAut(A::FreeAlphabet, i::Int, j::Int, lr::Char, pm::Char)
 end
 
 #Whiteheadautomorphism that fixes the ith generator a, and sends every other generator x to one of the following options
-#1: x^-1
+#1: x
 #2: xa
 #3: a^⁻1x
 #4: a^-1xa
@@ -122,7 +122,7 @@ function WhiteheadAut(A::FreeAlphabet, i::Int, options::Vector{Int})
         skip = k >= i ? 1 : 0
         k2 = k + skip
         if options[k]==1
-            images[k2]=[inv(A, A.gen[k2])]
+            images[k2]=[A.gen[k2]]
         elseif options[k]==2
             images[k2]=[A.gen[k2], A.gen[i]]
         elseif options[k]==3

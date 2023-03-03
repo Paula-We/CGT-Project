@@ -43,7 +43,7 @@ end
     invopt = WHA.inverseoptions(options)
     WAut2 = WHA.WhiteheadAut(A, 1, invopt)
     @test WHA.isIdentity(WHA.compose(WAut, WAut2))==true
-    @test (w -> WHA.evaluate(A, WAut, w)).([[1],[3],[5],[7],[9],[11],[13],[15]])==[[1],[3,1],[2,5],[2,7,1],[9,2],[1,11],[1,13,2],[16]]
+    @test (w -> WHA.evaluate(A, WAut, w)).([[1],[3],[5],[7],[9],[11],[13],[15]])==[[1],[3,1],[2,5],[2,7,1],[9,2],[1,11],[1,13,2],[15]]
 end
 
 @testset "Part of Basis" begin

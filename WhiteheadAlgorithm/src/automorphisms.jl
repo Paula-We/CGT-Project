@@ -17,7 +17,8 @@ struct Endomorphism
     end
 end
 
-function evaluate(A::FreeAlphabet, ϕ::Endomorphism, word::Vector{Int})
+function evaluate(ϕ::Endomorphism, word::Vector{Int})
+    A = ϕ.A
     image = Vector{Int}()
     for l in word
         (k, isgen) = A.letterToGen[l]
@@ -35,7 +36,7 @@ function compose(ϕ::Endomorphism,ψ::Endomorphism)
     A = ϕ.A
     newimages = Vector{Vector{Int}}(undef,length(ϕ.images))
     for i in 1:length(newimages)
-        newimages[i]= evaluate(A, ϕ, ψ.images[i])
+        newimages[i]= evaluate(ϕ, ψ.images[i])
     end
     return Endomorphism(ϕ.A, newimages)
 end

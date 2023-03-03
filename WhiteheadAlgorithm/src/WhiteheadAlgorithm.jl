@@ -69,7 +69,7 @@ function minimize(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
         for (i,j,lr,pm) in Iterators.product(1:n,1:n,['l','r'],['+','-']) 
             if i != j
                 NAut = NielsenAut(A, i, j, lr, pm)
-                b2 = (w -> evaluate(A, NAut, w)).(b)
+                b2 = (w -> evaluate(NAut, w)).(b)
                 if summedweight(b2) < summedweight(b) #the automorphism shortened b
                     b = b2
                     pr&&println(NAut)
@@ -96,7 +96,7 @@ function minimize(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
             for options in Iterators.product([collect(1:4) for k in 1:(n-1)]...) 
                 options = collect(options)
                 WAut = WhiteheadAut(A, i, options)
-                b2 = (w -> evaluate(A, WAut, w)).(b)
+                b2 = (w -> evaluate(WAut, w)).(b)
                 invopt = inverseoptions(options)
                 WAut2 = WhiteheadAut(A, i, invopt) #WAut2 is the inverse of WAut             
                 if summedweight(b2) < summedweight(b)
@@ -108,7 +108,7 @@ function minimize(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
                     break
                 end
                 #we also need to check whether the inverse WAut2 shortens b
-                b3 = (w -> evaluate(A, WAut2, w)).(b)
+                b3 = (w -> evaluate(WAut2, w)).(b)
                 if summedweight(b3) < summedweight(b)
                     b = b3
                     pr&&println(WAut2)
@@ -133,7 +133,7 @@ function permuteGensandInv(A::FreeAlphabet, b::Vector{Vector{Int}}, f::Endomorph
     for i in 1:length(b)
         if iseven(b[i][1])
             Aut = InvertGenAut(A, floor(Int, b[i][1]/2))
-            b = (w -> evaluate(A, Aut, w)).(b)
+            b = (w -> evaluate(Aut, w)).(b)
             f = compose(f, Aut)
             pr&&println(Aut)
             pr&&println((w -> word(A,w)).(b))
@@ -146,7 +146,7 @@ function permuteGensandInv(A::FreeAlphabet, b::Vector{Vector{Int}}, f::Endomorph
         i = floor(Int, (b[j][1]+1)/2) #the b[j]th-letter of our alphabet corresponds to the ith generator
         if i != j
             T = TranspositionAut(A, i, j)
-            b = (w -> evaluate(A, T, w)).(b)
+            b = (w -> evaluate(T, w)).(b)
             f = compose(f, T)
             pr&&println(T)
             pr&&println((w -> word(A,w)).(b))
@@ -162,7 +162,6 @@ end
 #[2,5,4,6,1,3,6,3,1] is primitive also using Whitehead automorphisms in F_3
 #[[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]] is a basis
 A = generateFreeAlphabet(5)
-print(A)
-#isPrimitive(A, [3,1,4,6,2,3])
+isPrimitive(A, [3,1,4,6,2,3])
 
 end # module WhiteheadAlgorithm

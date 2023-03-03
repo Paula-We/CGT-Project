@@ -53,12 +53,16 @@ function minimize(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
     pr&&println((w -> word(A,w)).(b0))
     pr&&println("")
     n = floor(Int,length(A)/2)
-    f = Endomorphism(A, [[2k-1] for k in 1:n]) #f is initialized as Identity
+    f = Endomorphism(A, [[A.gen[k]] for k in 1:n]) #f is initialized as Identity
     autfound = true
     for w in b
         if length(w)==0
             println("The trivial element can not be part of a basis")
-            return (false, f)
+            return (b, f)
+        end
+        if sum([w==w2 for w2 in b]) > 1
+            println("This cannot be part of a basis because "*word(A,w)*" is contained more than once.")
+            return (b, f)
         end
     end
     @assert length(b0) <= n "Too many elements to be a basis of the free group in $n generators"
@@ -162,6 +166,6 @@ end
 #[2,5,4,6,1,3,6,3,1] is primitive also using Whitehead automorphisms in F_3
 #[[2,5,4,6,1,3,6,3,1],[2,4,1],[2,5,4,1]] is a basis
 A = generateFreeAlphabet(5)
-isPrimitive(A, [3,1,4,6,2,3])
+isPartOfBasis(A, [[2,4],[3],[2,4]])
 
 end # module WhiteheadAlgorithm

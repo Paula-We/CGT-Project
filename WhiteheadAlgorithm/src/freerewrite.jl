@@ -1,4 +1,4 @@
-function freerewrite(A::Alphabet, word::Vector{Int})
+function freerewrite(A::Alph, word::Vector{Int})
     redword = Vector{Int}()
     if length(word)==0
         return []

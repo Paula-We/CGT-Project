@@ -18,19 +18,23 @@ struct FreeAlphabet{T}
 	dict :: Dict{T,Int}
 	inverse :: Vector{Int}
     gen :: Vector{Int}
+    letterToGen :: Vector{Tuple{Int,Bool}} 
 	function FreeAlphabet(A::Alphabet{T}) where T
         dim = floor(Int, length(A)/2)
 		alreadyseen = zeros(Bool, length(A))
         gen = Vector{Int}()
+        letterToGen = Vector{Tuple{Int,Bool}}(undef, length(A))
         for i in 1:length(A)           
             if !alreadyseen[i]
                 @assert hasinverse(A, i) && inv(A, i) != i
                 alreadyseen[inv(A,i)] = 1
                 push!(gen, i)
+                letterToGen[i] = (length(gen), true)
+                letterToGen[inv(A,i)] = (length(gen), false)
             end
         end
         @assert length(gen)*2 == length(A)
-		return new{T}(A.letters, A.dict, A.inverse, gen)
+		return new{T}(A.letters, A.dict, A.inverse, gen, letterToGen)
 	end
 end
 

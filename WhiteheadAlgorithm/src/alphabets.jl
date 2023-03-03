@@ -2,7 +2,7 @@ struct Alphabet{T}
     letters :: Vector{T}
 	dict :: Dict{T,Int}
 	inverse :: Vector{Int}
-	function Alphabet{T}(vect) where T
+	function Alphabet{T}(vect::Vector{T}) where T
 		@assert !(T <: Integer) "The type cannot be an Integer"
 		alphdict = Dict{T, Int}()
 		inverse = zeros(length(vect))
@@ -13,26 +13,47 @@ struct Alphabet{T}
 	end
 end
 
-Base.length(A::Alphabet) = length(A.letters)
-Base.getindex(A::Alphabet, letter) = A.dict[letter]
-Base.getindex(A::Alphabet, index::Integer) = A.letters[index]
+struct FreeAlphabet{T} 
+    letters :: Vector{T}
+	dict :: Dict{T,Int}
+	inverse :: Vector{Int}
+    gen :: Vector{Int}
+	function FreeAlphabet(A::Alphabet{T}) where T
+        dim = floor(Int, length(A)/2)
+		alreadyseen = zeros(Bool, length(A))
+        gen = Vector{Int}()
+        for i in 1:length(A)           
+            if !alreadyseen[i]
+                @assert hasinverse(A, i) && inv(A, i) != i
+                alreadyseen[inv(A,i)] = 1
+                push!(gen, i)
+            end
+        end
+        @assert length(gen)*2 == length(A)
+		return new{T}(A.letters, A.dict, A.inverse, gen)
+	end
+end
 
-function hasinverse(A::Alphabet, index::Integer)
+Alph = Union{Alphabet, FreeAlphabet}
+
+Base.length(A::Alph) = length(A.letters)
+Base.getindex(A::Alph, letter) = A.dict[letter]
+Base.getindex(A::Alph, index::Integer) = A.letters[index]
+
+function hasinverse(A::Alph, index::Integer)
     return A.inverse[index] != 0
 end
 
-hasinverse(A::Alphabet, letter::T) where T = hasinverse(A, A[letter])
+hasinverse(A::Alph, letter::T) where T = hasinverse(A, A[letter])
 
-function Base.inv(A::Alphabet, index::Integer)
+function Base.inv(A::Alph, index::Integer)
     hasinverse(A, index) ||
         throw(ArgumentError("Non-invertible letter: $(A[index])"))
 
     return A.inverse[index]
 end
 
-Base.inv(A::Alphabet, letter::T) where T = A[Base.inv(A,A[letter])]
-
-function setinverse!(A::Alphabet, x::Integer, X::Integer)
+function setinverse!(A::Alph, x::Integer, X::Integer)
     @assert !hasinverse(A, x) "Letter $(A[x]) already has inverse: $(inv(A, x))"
     @assert !hasinverse(A, X) "Letter $(A[X]) already has inverse: $(inv(A, X))"
 
@@ -42,23 +63,22 @@ function setinverse!(A::Alphabet, x::Integer, X::Integer)
     return A
 end
 
-Base.iterate(A::Alphabet) = iterate(A.letters)
-Base.iterate(A::Alphabet, state) = iterate(A.letters, state)
-Base.eltype(::Type{Alphabet{T}}) where {T} = T
+Base.iterate(A::Alph) = iterate(A.letters)
+Base.iterate(A::Alph, state) = iterate(A.letters, state)
 
-function Base.show(io::IO, A::Alphabet)
-    println(io, "Alphabet of $(eltype(A)) with $(length(A)) letters:")
+function Base.show(io::IO, A::Alph)
+    println(io, "Alphabet of $(eltype(A.letters[1])) with $(length(A)) letters:")
     for letter in A
         print(io, A[letter], ".\t", letter)
         if hasinverse(A, letter)
-            print(io, " with inverse ", inv(A, letter))
+            print(io, " with inverse ", A[inv(A, A[letter])])
         end
         println(io, "")
     end
 end
 
 #takes a word represented by a vector of integers and makes a string out of it
-function word(A::Alphabet, v::Vector{Int})
+function word(A::Alph, v::Vector{Int})
     str=""
     for i in v
         str = str*string(A[i])
@@ -74,7 +94,7 @@ function generateFreeAlphabet(n::Int)
     for i in 1:n
         setinverse!(A,2*i-1,2*i)
     end
-    return A
+    return FreeAlphabet(A)
 end
 
 #generates an alphabet for the free group
@@ -88,10 +108,10 @@ function generateBigFreeAlphabet(n::Int)
     for i in 1:n
         setinverse!(A,2*i-1,2*i)
     end
-    return A
+    return FreeAlphabet(A)
 end
 
-function Base.inv(A::Alphabet, word::Vector{Int})
+function Base.inv(A::Alph, word::Vector{Int})
     inverse = Vector{Int}()
     if length(word)==0
         return word

@@ -13,6 +13,8 @@ struct Alphabet{T}
 	end
 end
 
+# A FreeAlphabet corresponds to the free group in length(A.gen) generators,
+# so every letter has an inverse but no letter is self inverse
 struct FreeAlphabet{T} 
     letters :: Vector{T}
 	dict :: Dict{T,Int}

@@ -1,3 +1,4 @@
+#Endomorphisms of the free group in length(A)/2 generators
 struct Endomorphism 
     A::FreeAlphabet
     images::Vector{Vector{Int}} #Images on the generators (but not on their inverses)
@@ -67,7 +68,7 @@ function NielsenAut(A::FreeAlphabet, i::Int, j::Int, lr::Char, pm::Char)
     @assert i <= length(A)/2 && j <=length(A)/2 "$i or $j is too big"
     @assert lr ∈ ['l','r'] "$lr is an invalid argument, only 'l' and 'r' are allowed"
     @assert pm ∈ ['+','-'] "$pm is an invalid argument, only '+' and '-' are allowed"
-    images = Vector{Vector{Int}}(undef,floor(Int,length(A)/2))
+    images = Vector{Vector{Int}}(undef, length(A.gen))
     for k in 1:length(images)
         if k == i
             if lr == 'l'
@@ -99,7 +100,7 @@ end
 #6: ax
 #7: axa^-1
 function WhiteheadAut(A::FreeAlphabet, i::Int, options::Vector{Int})
-    @assert length(A)==(length(options)+1)*2 "Optionsize isn't matching to Alphabetsize"
+    @assert length(A.gen)==(length(options)+1) "Optionsize isn't matching to Alphabetsize"
     @assert i <= length(A)/2
     images = Vector{Vector{Int}}(undef, length(options)+1)
     images[i]=[A.gen[i]]
@@ -138,8 +139,8 @@ end
 
 #Automorphism that permutes the ith and the jth generator
 function TranspositionAut(A::FreeAlphabet, i::Int, j::Int)
-    @assert i<=length(A)/2 && j<=length(A)/2 "One of the indices is too big for this alphabet"
-    images = Vector{Vector{Int}}(undef,floor(Int,length(A)/2))
+    @assert i<=length(A.gen) && j<=length(A.gen) "One of the indices is too big for this alphabet"
+    images = Vector{Vector{Int}}(undef, length(A.gen))
     for k in 1:length(images)
         if k == i
             images[k]= [A.gen[j]]
@@ -154,8 +155,8 @@ end
 
 #Automorphism that inverts the ith generator
 function InvertGenAut(A::FreeAlphabet, i::Int)
-    @assert i<=length(A)/2 "$i is too big for this alphabet"
-    n = floor(Int,length(A)/2)
+    @assert i<=length(A.gen) "$i is too big for this alphabet"
+    n = length(A.gen)
     images = [[A.gen[k]] for k in 1:n]
     images[i] = [inv(A, A.gen[i])]
     return Endomorphism(A, images, false)

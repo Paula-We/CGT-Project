@@ -1,5 +1,4 @@
 module WhiteheadAlgorithm
-WHA = WhiteheadAlgorithm
 
 include("alphabets.jl")
 include("freerewrite.jl")
@@ -16,7 +15,7 @@ function isPrimitive(A::FreeAlphabet, w0::Vector{Int}, pr=true::Bool)
     (v,f)=minimize(A,[w0],pr)
     w=v[1]
     if length(w)==1 #w0 is primitive
-        (v,f)=permuteGensandInv(A,v,f,pr)
+        (v,f)=permuteGensandInv(A,v,f,pr) #we may need some extra automorphisms to ensure that the first generator gets mapped to w0
         w=v[1]
         pr&&println(word(A, w0)*" is a primitive word. Here is an automorphism mapping the first generator to it:")
         pr&&print(f)
@@ -33,7 +32,8 @@ end
 function isPartOfBasis(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool) 
     (b,f)=minimize(A,b0,pr)
     if summedweight(b)==length(b)
-        (b,f)=permuteGensandInv(A,b,f,pr)
+        (b,f)=permuteGensandInv(A,b,f,pr) #we may need some extra automorphisms to ensure that the first generators get mapped to b0
+        w=v[1]
         lb = length(b)
         pr&&print((w -> word(A,w)).(b0))
         pr&&println(" can be part of a basis. Here's an automorphism mapping the first $lb generators to them:")
@@ -52,7 +52,7 @@ function minimize(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
     b = (w -> freerewrite(A,w)).(b0)
     pr&&println((w -> word(A,w)).(b0))
     pr&&println("")
-    n = floor(Int,length(A)/2)
+    n = length(A.gen)
     f = Endomorphism(A, [[A.gen[k]] for k in 1:n]) #f is initialized as Identity
     autfound = true
     for w in b
@@ -88,7 +88,7 @@ function minimize(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
                 end
             end
         end
-        if autfound == true
+        if autfound
             continue
         end
         pr&&println("Now we need to look at all Whitehead automorphisms...")
@@ -127,9 +127,8 @@ function minimize(A::FreeAlphabet, b0::Vector{Vector{Int}}, pr=true::Bool)
     return(b,f)
 end
 
-#This function takes a vector of words where each word is either a generator or an inverse of a generator
-#and finds an automorphism taking the words to the first generators
-#We also compose this automorphism with the the one we already had before
+#We need this function if minimize() managed to minimize the word vector s.t. now every word has length 1
+#but some generators are still inverted and their ordering is incorrect
 function permuteGensandInv(A::FreeAlphabet, b::Vector{Vector{Int}}, f::Endomorphism, pr=true::Bool)
     pr&&println("")
     #First we map our word vector to another one where each word is a generator 
@@ -145,7 +144,7 @@ function permuteGensandInv(A::FreeAlphabet, b::Vector{Vector{Int}}, f::Endomorph
             pr&&println("")
         end
     end
-    #Now we need to get the generators in the right ordered
+    #Now we need to get the generators in the right order
     #To achieve that we use transpositions
     for j in 1:length(b)
         k = A.letterToGen[b[j][1]][1]

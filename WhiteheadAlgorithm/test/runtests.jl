@@ -58,7 +58,7 @@ end
     @test b == false
     (b, f) = WHA.isPartOfBasis(A, [[1,1]],false)
     @test b == false
-    (b, f) = WHA.isPartOfBasis(A, [[1,3,2,4]],false)
+    (b, f) = WHA.isPartOfBasis(A, [[1,3,2,4]],false) #Commutators can not be part of a basis
     @test b == false   
     (b, f) = WHA.isPartOfBasis(A, [[1,2]],false) #Trivial element is not part of basis
     @test b == false

@@ -1,3 +1,4 @@
+#This function takes a word over an alphabet and reduces it freely
 function freerewrite(A::Alph, word::Vector{Int})
     redword = Vector{Int}()
     if length(word)==0
